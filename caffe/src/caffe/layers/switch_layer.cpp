@@ -7,16 +7,16 @@
 
 namespace caffe {
 
-// Let's move the selector to the last bottom
+// Selector is always the last bottom
 template <typename Dtype>
 void SwitchLayer<Dtype>::LayerSetUp(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) {
   //Read switch parameter 
   switch_type_ = this->layer_param_.switch_param().switch_type();
-  // Check that the dimensions of bottoms are all the same
   DCHECK(switch_type_==1|| switch_type_==2);
-  if(switch_type_==1)//switch 0 implementation
+  if(switch_type_==1)//switch many-to-one implementation
  { 
+  // Check that the dimensions of bottoms are all the same
   for (int i = 1; i < bottom.size() - 1; ++i) {
     CHECK_EQ(bottom[i]->num(),  bottom[0]->num());
     CHECK_EQ(bottom[i]->channels(), bottom[0]->channels());
@@ -36,7 +36,8 @@ template <typename Dtype>
 void SwitchLayer<Dtype>::Reshape(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) {
   // Initialize with the first blob.
- if(switch_type_==1)
+ if(switch_type_==1) //switch many-to-one implementation
+
  { 
  	top[0]->ReshapeLike(*bottom[0]);
 	num_elem_ = top[0]->channels() * top[0]->height() * top[0]->width();;
@@ -76,7 +77,8 @@ template <typename Dtype>
 void SwitchLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) {
   const int selector_ind = bottom.size() - 1;
- if(switch_type_==1)
+ if(switch_type_==1)//switch many-to-one implementation
+
  { 
   Dtype* top_data = top[0]->mutable_cpu_data();
 
@@ -91,7 +93,8 @@ void SwitchLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
           top_data + top[0]->offset(n));
   }
  }
- else
+ else//switch one-to-many implementation
+
  {
   const Dtype* bottom_data = bottom[0]->cpu_data();
   vector<int> count_top_num(top.size());  // keeps count of the top_num
@@ -114,8 +117,7 @@ template <typename Dtype>
 void SwitchLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
       const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom) {
   const int selector_ind = bottom.size() - 1;
- // const int num_elem = top[0]->channels() * top[0]->height() * top[0]->width();
- if(switch_type_==1)
+ if(switch_type_==1)//switch many-to-one implementation
  { 
  const Dtype* top_diff = top[0]->cpu_diff();
 
@@ -128,7 +130,7 @@ void SwitchLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
         bottom_diff + bottom[index]->offset(n));
   }
  }
- else
+ else//switch one-to-many implementation
  {
   CHECK(!propagate_down[0]) <<" Layer cannot backpropagate to bottom";
 

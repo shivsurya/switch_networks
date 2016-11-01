@@ -17,7 +17,7 @@ template <typename Dtype>
 void SwitchLayer<Dtype>::Forward_gpu(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) {
   const int selector_ind = bottom.size() - 1;
-  if(switch_type_==1)
+  if(switch_type_==1)//switch many-to-one implementation
   { 
   Dtype* top_data = top[0]->mutable_gpu_data();
 
@@ -32,7 +32,7 @@ void SwitchLayer<Dtype>::Forward_gpu(const vector<Blob<Dtype>*>& bottom,
           top_data+top[0]->offset(n));
   }
   }
-  else
+  else//switch one-to-many implementation
   {
   const Dtype* bottom_data = bottom[0]->gpu_data();
   vector<int> count_top_num(top.size());  // keeps count of the top_num
@@ -56,7 +56,7 @@ template <typename Dtype>
 void SwitchLayer<Dtype>::Backward_gpu(const vector<Blob<Dtype>*>& top,
       const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom) {
   const int selector_ind = bottom.size() - 1;
-  if(switch_type_==1)
+  if(switch_type_==1)//switch many-to-one implementation
   {
   const Dtype* top_diff = top[0]->gpu_diff();
 
@@ -69,7 +69,7 @@ void SwitchLayer<Dtype>::Backward_gpu(const vector<Blob<Dtype>*>& top,
         bottom_diff + bottom[index]->offset(n));
   }
   }
-  else
+  else//switch one-to-many implementation
   {
   CHECK(!propagate_down[0])<<"Bottom layer cannot be propagated to.";
 

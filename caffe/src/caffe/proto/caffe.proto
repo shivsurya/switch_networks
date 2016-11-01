@@ -1101,6 +1101,9 @@ message SoftmaxParameter {
 }
 
 message SwitchParameter {
+//switch_type selects the mode of switching ie. one-to-many or many-to-one
+//switch_type = 1 (many-to-one mode)
+//switch_type = 2 (one-to-many mode)
   optional uint32 switch_type = 1 [default = 1];
 }
 
