@@ -12,8 +12,8 @@ This code is released under the MIT License (Please refer to the LICENSE file fo
 2. To install this version of CAFFE , install all the dependencies for CAFFE and then execute the following:
   
    ```bash
-   $ git clone https://github.com/val-iisc/swiden.git
-   $ cd swiden/caffe/
-   $ make all 
+   $ git https://github.com/shivsurya/switch_networks.git
+   $ cd switch_networks/caffe/
+   $ make all -j4
    $ make matcaffe #if you have a MATLAB installation and want to link CAFFE to MATLAB
    $ make pycaffe  #if you want to link CAFFE to python
