@@ -1,4 +1,4 @@
-### SwiDeN
+### Switching Networks
 
 This projects implements a switch layer to existing CAFFE implementation that can direct data in two ways:<br />
 1. From one bottom blob to one of the multiple top blobs.(one-to-many)<br />
